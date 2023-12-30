@@ -2,15 +2,13 @@
     import { onMounted, watch, ref  } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     
-    import FirstStep from './FirstStep.vue'
-    import SecondStep from './SecondStep.vue'
-    import ThirdStep from './ThirdStep.vue'
-    import FourthStep from './FourthStep.vue'
-
     import { useFirstStep } from '@/stores/FirstStep'
     import { usePfStep } from '@/stores/PfStep'
     import { usePjStep } from '@/stores/PjStep'
     import { useThirdStep } from '@/stores/ThirdStep'
+    
+    import { stepComponents } from '@/utils/steps'
+    import validateAndNavigate from '@/utils/validateAndNavigate'
 
     const storeFirstStep = useFirstStep()
     const storePfStep = usePfStep()
@@ -19,31 +17,10 @@
 
     const route = useRoute()
     const router = useRouter()
-
-    const stepComponents = ref({
-        1: {
-            component: FirstStep, 
-            title: 'Seja bem vindo(a)'
-        },
-        2: {
-            component: SecondStep, 
-            title: ``
-        },
-        3: {
-            component: ThirdStep, 
-            title: 'Senha de acesso'
-        },
-        4: {
-            component: FourthStep, 
-            title: 'Revise suas informações'
-        },
-    })
-
     const stepComponent = ref()
 
     function setComponent(){
-        const step = Number(route.params.step)
-        stepComponent.value = stepComponents.value[step]
+        stepComponent.value = stepComponents.value[Number(route.params.step)]
         document.title = stepComponent.value.title
     }
 
@@ -66,56 +43,28 @@
     })
 
     async function nextStep() {
-        const step = Number(route.params.step)
-        var isFormCorrect = null
-
-        switch (step) {
-            case 1:
-                isFormCorrect = await storeFirstStep.v$.$validate()
-                break
-                
-            case 2:
-                isFormCorrect = await (
-                    storeFirstStep.infos.type === 'pj' ? 
-                    storePjStep.v$.$validate() : 
-                    storePfStep.v$.$validate()
-                )
-                break
-
-            case 3:
-                isFormCorrect = await storeThirdStep.v$.$validate()
-                break
-
-            case 4: 
-                var first = await storeFirstStep.v$.$validate()
-                var second = isFormCorrect = await (
-                    storeFirstStep.infos.type === 'pj' ? 
-                    storePjStep.v$.$validate() : 
-                    storePfStep.v$.$validate()
-                )
-                var third = await storeThirdStep.v$.$validate()
-
-                const validations = [first, second, third]
-
-                if(!validations.includes(false)){
-                    return router.push({ name: 'success'})
-                }
-            default:
-                break
-        }
-
-        if (!isFormCorrect) {
-            return
-        }
-
-        router.push({ name: 'step', params: { step: step + 1} })
+        validateAndNavigate(
+            Number(route.params.step), 
+            {
+                storeFirstStep,
+                storePfStep,
+                storePjStep,
+                storeThirdStep,
+            }, 
+            router
+        )
     }
 
-    function resetStores(){        
-        storePjStep.v$.$reset()
-        storePfStep.v$.$reset()
-        storeThirdStep.v$.$reset()
-    }
+    function resetStores() {
+    [
+        storePjStep, 
+        storePfStep, 
+        storeThirdStep
+    ].forEach(store => {
+        store.v$.$reset()
+    })
+}
+
 </script>
 
 <template>
@@ -161,6 +110,7 @@
     .page-main {
         &__steps {
             span {
+                font-weight: 700;
                 color: $color-primary;
             }
         }
