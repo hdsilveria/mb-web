@@ -1,0 +1,22 @@
+input{
+    &[type="text"], &[type="password"], &[type="date"]{
+        width: 100%;
+        height: $height-input;
+        border: 1px solid #2929295b;
+        border-radius: 6px;
+    
+        &:focus {
+            outline: none;
+        }
+
+    }
+}
+
+.input-errors {
+    color: $color-error;
+    font-size: $font-error;
+}
+
+.has-error {
+    border: 1px solid $color-error !important;
+}

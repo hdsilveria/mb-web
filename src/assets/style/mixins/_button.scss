@@ -1,0 +1,28 @@
+@import '../variables';
+
+@mixin button-base() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: $font-main;
+    width: 100%;
+    height: $height-button;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+  
+@mixin button-primary() {
+    @include button-base;
+    color: $color-neutral;
+    background: $color-primary;
+    border: none;
+}
+
+@mixin button-secondary() {
+    @include button-base;
+    color: $color-primary;
+    background: $color-neutral;
+    border: 1px solid $color-primary;
+}
