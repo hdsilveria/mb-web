@@ -12,6 +12,10 @@ input{
     }
 }
 
+h1, h2, h3 {
+    font-family: Montserrat-bold, sans-serif !important;
+}
+
 .input-errors {
     color: $color-error;
     font-size: $font-error;
@@ -19,4 +23,16 @@ input{
 
 .has-error {
     border: 1px solid $color-error !important;
+}
+
+main {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    height: 100vh;
+
+    section {
+        width: 1440px;
+        padding: 50px 10px;
+    }
 }
