@@ -27,7 +27,7 @@ export const setupPiniaRouterPlugin = (router) => {
             return next({name: 'step', params: {step: 3}})
         }
 
-        if(step > 4){
+        if(to.name == 'step' && ![1,2,3,4].includes(step)){
             return next({name: 'step', params: {step: 1}})
         }
 
