@@ -8,6 +8,10 @@ const router = createRouter({
       redirect: { name: 'step', params: {step: 1} }
     },
     {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
+    },
+    {
       path: '/formulario/:step',
       name: 'step',
       component: () => import('../views/Home.vue')
